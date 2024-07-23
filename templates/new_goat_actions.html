@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Goat Actions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common_styles.css') }}">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f3f4ed;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+        }
+        h1 {
+            text-align: center;
+            color: #5d4037;
+        }
+        p {
+            text-align: center;
+            font-size: 1.1em;
+            color: #4e342e;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+        }
+        ul li {
+            margin: 10px 0;
+        }
+        ul li a {
+            display: block;
+            padding: 10px;
+            background: #8d6e63;
+            color: #ffffff;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        ul li a:hover {
+            background: #6d4c41;
+        }
+        .back-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .back-button button {
+            padding: 10px 20px;
+            background: #a1887f;
+            color: #ffffff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        .back-button button:hover {
+            background: #8d6e63;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>New Goat Actions</h1>
+        <p>Choose an action for the goat with RFID: {{ rfid }}</p>
+        <ul>
+            <li><a href="{{ url_for('baby_goat_registration', rfid=rfid) }}">Register Baby Goat</a></li>
+            <li><a href="{{ url_for('existing_goat_registration', rfid=rfid) }}">Register Existing Goat</a></li>
+        </ul>
+        <div class="back-button">
+            <a href="{{ url_for('index') }}">
+                <button>Back to Home</button>
+            </a>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/common_script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFID Goat Tag Project</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <div class="header">
+        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="logo">
+        <h1>Welcome to the RFID Goat Tag Project</h1>
+        <p>New updates and information on goat care</p>
+        <img src="{{ url_for('static', filename='images/mflag.png') }}" alt="Malaysia Flag" class="flag">
+    </div>
+    <div class="marquee">
+        <marquee behavior="scroll" direction="left">
+            {% for announcement in announcements %}
+                {{ announcement[0] }} &nbsp;&nbsp;&nbsp;
+            {% endfor %}
+        </marquee>
+    </div>
+    <div class="container">
+        <div class="options">
+            <h2>Options</h2>
+            <div class="option-buttons">
+                <button onclick="location.href='{{ url_for('livestocks') }}'">Livestocks</button>
+                <button onclick="location.href='{{ url_for('vaccinate') }}'">Vaccinate</button>
+                <button onclick="location.href='{{ url_for('slaughtered_goats') }}'">Slaughter</button>
+                <button onclick="location.href='{{ url_for('scan') }}'">Scan Me</button>
+                <button onclick="location.href='{{ url_for('feed_calculator') }}'">Feed Calculator</button>
+                <button onclick="location.href='{{ url_for('price_calculator') }}'">Price Calculator</button>
+                <button onclick="location.href='{{ url_for('about_farm') }}'">About Farm</button>
+                <button onclick="location.href='{{ url_for('view_goats') }}'">View Goats</button>
+            </div>
+        </div>
+        <div class="news-section">
+            <h2>Latest News</h2>
+            <div class="news-item">
+                <h3>Goat Health Tips</h3>
+                <p>Learn about the latest tips for keeping your goats healthy.</p>
+            </div>
+            <div class="news-item">
+                <h3>New RFID Technology</h3>
+                <p>Discover the new advancements in RFID technology for livestock.</p>
+            </div>
+        </div>
+        <div class="goat-care-section">
+            <h2>Goat Care Information</h2>
+            <div class="info-item">
+                <h3>Feeding</h3>
+                <p>Ensure your goats have a balanced diet with adequate forage, hay, and pellets.</p>
+            </div>
+            <div class="info-item">
+                <h3>Housing</h3>
+                <p>Provide your goats with clean, dry, and well-ventilated housing to keep them healthy.</p>
+            </div>
+        </div>
+        <div class="gallery-section">
+            <h2>Image Gallery</h2>
+            <div class="gallery">
+                <img src="{{ url_for('static', filename='images/goat1.jpg') }}" alt="Goat 1">
+                <img src="{{ url_for('static', filename='images/goat2.jpeg') }}" alt="Goat 2">
+                <img src="{{ url_for('static', filename='images/goat3.jpeg') }}" alt="Goat 3">
+            </div>
+        </div>
+        <div class="charts-section">
+            <h2>Data Visualization</h2>
+            <div class="chart-container">
+                <canvas id="goatChart"></canvas>
+            </div>
+        </div>
+        <div class="feedback-section">
+            <h2>Feedback</h2>
+            <form id="feedbackForm">
+                <input type="text" id="name" name="name" placeholder="Your Name" required>
+                <input type="email" id="email" name="email" placeholder="Your Email" required>
+                <textarea id="feedback" name="feedback" placeholder="Your Feedback" rows="4" required></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+        <div class="recent-activities-section">
+            <h2>Recent Activities</h2>
+            <div class="activity">
+                <h3>Vaccination Drive</h3>
+                <p>We recently completed a vaccination drive covering over 200 goats.</p>
+            </div>
+            <div class="activity">
+                <h3>RFID Tagging</h3>
+                <p>All goats have been successfully tagged with RFID for better tracking and management.</p>
+            </div>
+        </div>
+        <div class="about-farm-section">
+            <h2>About Farm</h2>
+            <form id="farmForm">
+                <input type="number" id="forage" name="forage" placeholder="Forage (%)" required>
+                <input type="number" id="hay" name="hay" placeholder="Hay (%)" required>
+                <input type="number" id="pellet" name="pellet" placeholder="Pellet (%)" required>
+                <input type="number" id="num_goats" name="num_goats" placeholder="Number of Goats" required>
+                <button type="button" onclick="calculateUsage()">Calculate Usage</button>
+            </form>
+            <div id="result" class="result" style="display: none;">
+                <h3>Usage Results</h3>
+                <p>Forage per Day: <span id="foragePerDay"></span> kg</p>
+                <p>Forage per Month: <span id="foragePerMonth"></span> kg</p>
+                <p>Forage per Year: <span id="foragePerYear"></span> kg</p>
+                <p>Hay per Day: <span id="hayPerDay"></span> kg</p>
+                <p>Hay per Month: <span id="hayPerMonth"></span> kg</p>
+                <p>Hay per Year: <span id="hayPerYear"></span> kg</p>
+                <p>Pellet per Day: <span id="pelletPerDay"></span> kg</p>
+                <p>Pellet per Month: <span id="pelletPerMonth"></span> kg</p>
+                <p>Pellet per Year: <span id="pelletPerYear"></span> kg</p>
+            </div>
+            <div class="chart-container" style="display: none;">
+                <canvas id="usageChart"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="footer">
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var ctx = document.getElementById('goatChart').getContext('2d');
+            var goatChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                    datasets: [{
+                        label: 'Goat Weight (kg)',
+                        data: [45, 50, 55, 60, 65, 70, 75],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+
+        document.getElementById('feedbackForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            alert('Thank you for your feedback!');
+            this.reset();
+        });
+
+        function calculateUsage() {
+            const forage = document.getElementById('forage').value;
+            const hay = document.getElementById('hay').value;
+            const pellet = document.getElementById('pellet').value;
+            const numGoats = document.getElementById('num_goats').value;
+
+            const foragePerDay = (forage / 100) * numGoats;
+            const hayPerDay = (hay / 100) * numGoats;
+            const pelletPerDay = (pellet / 100) * numGoats;
+
+            const foragePerMonth = foragePerDay * 30;
+            const hayPerMonth = hayPerDay * 30;
+            const pelletPerMonth = pelletPerDay * 30;
+
+            const foragePerYear = foragePerDay * 365;
+            const hayPerYear = hayPerDay * 365;
+            const pelletPerYear = pelletPerDay * 365;
+
+            document.getElementById('foragePerDay').textContent = foragePerDay.toFixed(2);
+            document.getElementById('foragePerMonth').textContent = foragePerMonth.toFixed(2);
+            document.getElementById('foragePerYear').textContent = foragePerYear.toFixed(2);
+            document.getElementById('hayPerDay').textContent = hayPerDay.toFixed(2);
+            document.getElementById('hayPerMonth').textContent = hayPerMonth.toFixed(2);
+            document.getElementById('hayPerYear').textContent = hayPerYear.toFixed(2);
+            document.getElementById('pelletPerDay').textContent = pelletPerDay.toFixed(2);
+            document.getElementById('pelletPerMonth').textContent = pelletPerMonth.toFixed(2);
+            document.getElementById('pelletPerYear').textContent = pelletPerYear.toFixed(2);
+
+            document.getElementById('result').style.display = 'block';
+
+            // Display the pie chart
+            var usageCtx = document.getElementById('usageChart').getContext('2d');
+            var usageChart = new Chart(usageCtx, {
+                type: 'pie',
+                data: {
+                    labels: ['Forage', 'Hay', 'Pellet'],
+                    datasets: [{
+                        data: [foragePerYear, hayPerYear, pelletPerYear],
+                        backgroundColor: ['rgba(54, 162, 235, 0.2)', 'rgba(75, 192, 192, 0.2)', 'rgba(255, 206, 86, 0.2)'],
+                        borderColor: ['rgba(54, 162, 235, 1)', 'rgba(75, 192, 192, 1)', 'rgba(255, 206, 86, 1)'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true
+                }
+            });
+
+            document.querySelector('.chart-container').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

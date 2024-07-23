@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/health_registration_styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Health Details</h1>
+        <form action="{{ url_for('register_health') }}" method="POST">
+            <label for="rfid">RFID Tag:</label>
+            <input type="text" id="rfid" name="rfid" value="{{ rfid }}" readonly><br>
+
+            <label for="clinical_sign">Clinical Sign:</label>
+            <input type="text" id="clinical_sign" name="clinical_sign" list="clinical_signs" required><br>
+            <datalist id="clinical_signs">
+                <option value="Coughing">
+                <option value="Nasal discharge">
+                <option value="Labored breathing">
+                <option value="Open-mouth breathing">
+                <option value="Increased respiratory rate">
+                <option value="Decreased appetite">
+                <option value="Decreased rumination">
+                <option value="Diarrhea">
+                <option value="Constipation">
+                <option value="Abdominal distension">
+                <option value="Weight loss">
+                <option value="Circling">
+                <option value="Tremors or seizures">
+                <option value="Head pressing">
+                <option value="Incoordination or staggering">
+                <option value="Paralysis">
+                <option value="Facial nerve paralysis">
+                <option value="Fever">
+                <option value="Lethargy">
+                <option value="Dehydration">
+                <option value="Jaundice">
+                <option value="Hair loss">
+                <option value="Scabs or lesions">
+                <option value="Skin redness or inflammation">
+                <option value="Swelling">
+                <option value="Changes in coat condition">
+                <option value="Lameness">
+                <option value="Joint swelling">
+                <option value="Stiffness">
+                <option value="Reluctance to move">
+                <option value="Abnormal posture">
+                <option value="Abnormal vaginal discharge">
+                <option value="Infertility">
+                <option value="Abortions">
+                <option value="Swollen or painful udder">
+                <option value="Frequent urination">
+                <option value="Blood in urine">
+                <option value="Straining to urinate">
+                <option value="Swollen or painful testicles">
+            </datalist>
+
+            <label for="disease_record">Disease Record:</label>
+            <input type="text" id="disease_record" name="disease_record" list="disease_records" required><br>
+            <datalist id="disease_records">
+                <option value="Mastitis">
+                <option value="Pneumonia">
+                <option value="Foot Rot">
+                <option value="Scours">
+                <option value="Enterotoxemia">
+            </datalist>
+
+            <label for="medical_record">Medical Record:</label>
+            <input type="text" id="medical_record" name="medical_record" list="medical_records" required><br>
+            <datalist id="medical_records">
+                <option value="Antibiotics">
+                <option value="Deworming">
+                <option value="Vaccination">
+                <option value="Surgery">
+                <option value="Other Treatments">
+            </datalist>
+
+            <label for="physical_examination">Physical Examination:</label>
+            <input type="text" id="physical_examination" name="physical_examination" list="physical_examinations" required><br>
+            <datalist id="physical_examinations">
+                <option value="Normal">
+                <option value="Abnormal">
+                <option value="Inconclusive">
+            </datalist>
+
+            <label for="date_of_vaccination">Date of Vaccination:</label>
+            <input type="date" id="date_of_vaccination" name="date_of_vaccination"><br>
+
+            <label for="type_of_vaccination">Type of Vaccination:</label>
+            <input type="text" id="type_of_vaccination" name="type_of_vaccination" list="types_of_vaccination"><br>
+            <datalist id="types_of_vaccination">
+                <option value="Rabies">
+                <option value="Tetanus">
+                <option value="Clostridial">
+                <option value="Pneumonia">
+            </datalist>
+
+            <label for="deworming_date">Deworming Date:</label>
+            <input type="date" id="deworming_date" name="deworming_date"><br>
+
+            <label for="type_of_deworming">Type of Deworming:</label>
+            <input type="text" id="type_of_deworming" name="type_of_deworming" list="types_of_deworming"><br>
+            <datalist id="types_of_deworming">
+                <option value="Albendazole">
+                <option value="Ivermectin">
+                <option value="Fenbendazole">
+                <option value="Levamisole">
+            </datalist>
+
+            <label for="deticking_date">Deticking Date:</label>
+            <input type="date" id="deticking_date" name="deticking_date"><br>
+
+            <label for="type_of_deticking">Type of Deticking:</label>
+            <input type="text" id="type_of_deticking" name="type_of_deticking" list="types_of_deticking"><br>
+            <datalist id="types_of_deticking">
+                <option value="Chemical">
+                <option value="Manual">
+                <option value="Biological">
+            </datalist>
+
+            <label for="notes">Notes:</label>
+            <textarea id="notes" name="notes"></textarea><br>
+
+            <label for="officer_name">Officer Name:</label>
+            <input type="text" id="officer_name" name="officer_name" required><br>
+
+            <button type="submit">Register</button>
+        </form>
+        <div class="back-button">
+            <a href="{{ url_for('existing_goat_actions', rfid=rfid) }}">
+                <button>Back to Actions</button>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

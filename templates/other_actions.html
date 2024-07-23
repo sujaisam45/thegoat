@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Other Actions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common_styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Other Actions for Goat</h1>
+        <p>The goat with RFID: {{ rfid }} is not registered. Choose an action below:</p>
+        <ul>
+            <li><a href="#">Breeding Program</a></li>
+            <li><a href="#">Health Records</a></li>
+            <li><a href="#">Slaughter Details</a></li>
+        </ul>
+        <div class="back-button">
+            <a href="{{ url_for('index') }}">
+                <button>Back to Home</button>
+            </a>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='js/common_script.js') }}"></script>
+</body>
+</html>

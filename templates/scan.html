@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RFID Scanner</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            margin-top: 40px;
+        }
+
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+        }
+
+        .link-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .link-container a {
+            display: inline-block;
+            margin-top: 20px;
+            color: #1E90FF;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .link-container a:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px 0;
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const scanButton = document.getElementById('scanButton');
+            const rfidDisplay = document.getElementById('rfidDisplay');
+
+            scanButton.addEventListener('click', function () {
+                fetch('/read_rfid', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.rfid) {
+                        rfidDisplay.innerText = `RFID: ${data.rfid}`;
+                        // Redirect to process_scan to check if the RFID is in the database
+                        const form = new FormData();
+                        form.append('rfid', data.rfid);
+
+                        fetch('/process_scan', {
+                            method: 'POST',
+                            body: form
+                        })
+                        .then(response => {
+                            if (response.redirected) {
+                                window.location.href = response.url;
+                            } else {
+                                console.error('Error processing scan');
+                            }
+                        });
+                    } else {
+                        rfidDisplay.innerText = 'No RFID tag read';
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>RFID Scanner</h1>
+        <button id="scanButton">Scan RFID</button>
+        <p id="rfidDisplay"></p>
+
+        <div class="footer">
+            &copy; 2024 RFID Scanner. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

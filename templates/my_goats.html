@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Goats</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/common_styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>My Goats</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>RFID</th>
+                    <th>Breed</th>
+                    <th>Gender</th>
+                    <th>Date of Birth</th>
+                    <th>Weight</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for goat in goats %}
+                <tr>
+                    <td>{{ goat[1] }}</td>
+                    <td>{{ goat[3] }}</td>
+                    <td>{{ goat[4] }}</td>
+                    <td>{{ goat[5] }}</td>
+                    <td>{{ goat[7] }}</td>
+                    <td>{{ goat[8] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="back-button">
+            <a href="{{ url_for('index') }}">
+                <button>Back to Home</button>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

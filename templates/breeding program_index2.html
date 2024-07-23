@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breeding Program</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/breeding_program_styles.css') }}">
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+    <script src="{{ url_for('static', filename='js/breeding_program_script.js') }}"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Breeding Program </h1>
+        <form id="breedingForm" action="{{ url_for('register_breeding_program') }}" method="post">
+            <label for="male_rfid">Male Goat ID:</label>
+            <input type="text" id="male_rfid" name="male_rfid" required readonly>
+            <button type="button" id="scanMaleButton">Scan Male Goat RFID</button>
+
+            <label for="female_rfid">Female Goat ID:</label>
+            <input type="text" id="female_rfid" name="female_rfid" required readonly>
+            <button type="button" id="scanFemaleButton">Scan Female Goat RFID</button>
+            
+            <label for="program_date">Program Date:</label>
+            <input type="date" id="program_date" name="program_date" required>
+
+            <label for="pregnancy_check_date">Pregnancy Check Date:</label>
+            <input type="date" id="pregnancy_check_date" name="pregnancy_check_date" required readonly>
+
+            <label for="expected_birth_date">Expected Birth Date:</label>
+            <input type="date" id="expected_birth_date" name="expected_birth_date" required readonly>
+
+            <label for="breeding_method">Breeding Method:</label>
+            <select id="breeding_method" name="breeding_method" required>
+                <option value="">Select Method</option>
+                <option value="AI">Artificial Insemination (AI)</option>
+                <option value="ET">Embryo Transfer (ET)</option>
+            </select>
+
+            <div id="ai_details" class="hidden">
+                <label for="straw_id_ai">Straw ID:</label>
+                <input type="text" id="straw_id_ai" name="straw_id_ai">
+                <label for="ai_type">AI Type:</label>
+                <select id="ai_type" name="ai_type">
+                    <option value="Vaginal AI">Vaginal AI</option>
+                    <option value="Intra-cervical AI">Intra-cervical AI</option>
+                    <option value="Trans-cervical AI">Trans-cervical AI</option>
+                    <option value="Laparoscopic AI">Laparoscopic AI</option>
+                </select>
+                <label for="ai_provider">AI Provider:</label>
+                <input type="text" id="ai_provider" name="ai_provider">
+            </div>
+
+            <div id="et_details" class="hidden">
+                <label for="straw_id_et">Straw ID:</label>
+                <input type="text" id="straw_id_et" name="straw_id_et">
+                <label for="et_type">ET Type:</label>
+                <select id="et_type" name="et_type">
+                    <option value="Surgical">Surgical</option>
+                    <option value="Laparoscopic">Laparoscopic</option>
+                </select>
+                <label for="et_provider">ET Provider:</label>
+                <input type="text" id="et_provider" name="et_provider">
+            </div>
+
+            <button type="submit">Register</button>
+        </form>
+        <div class="link-container">
+            <a href="{{ url_for('existing_goat_actions', rfid='rfid') }}">Back to Actions</a>
+        </div>
+    </div>
+</body>
+</html>

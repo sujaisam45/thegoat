@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Baby Goat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/baby_goat_registration_styles.css') }}">
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+    <script src="{{ url_for('static', filename='js/baby_goat_registration_script.js') }}"></script>
+</head>
+<body>
+    <header>
+        <h1>Birth Registration</h1>
+    </header>
+    <div class="container">
+        <form action="{{ url_for('register_baby_goat') }}" method="post">
+            <label for="rfid">GOAT ID:</label>
+            <input type="text" id="rfid" name="rfid" required readonly><br>
+
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" name="dob" required><br>
+
+            <label for="gender">Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select><br>
+
+            <label for="father_goat_rfid">Father Goat ID:</label>
+            <input type="text" id="father_goat_rfid" name="father_goat_rfid" required readonly>
+            <button type="button" id="scanFatherButton">Scan Father Goat RFID</button><br>
+
+            <label for="mother_goat_rfid">Mother Goat ID:</label>
+            <input type="text" id="mother_goat_rfid" name="mother_goat_rfid" required readonly>
+            <button type="button" id="scanMotherButton">Scan Mother Goat RFID</button><br>
+
+            <label for="born_weight">Born Weight:</label>
+            <input type="number" step="0.01" id="born_weight" name="born_weight" required><br>
+
+            <button type="submit">Register</button>
+        </form>
+        <div class="back-button">
+            <a href="{{ url_for('new_goat_actions', rfid='rfid') }}">
+                <button>Back to Actions</button>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

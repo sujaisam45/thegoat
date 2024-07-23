@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/farm_registration_styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Farm Registration</h1>
+        <form id="farmRegistrationForm" action="{{ url_for('register_farm') }}" method="post">
+            <div class="form-group">
+                <label for="premise_id">Premise ID:</label>
+                <input type="text" id="premise_id" name="premise_id" required>
+            </div>
+
+            <div class="form-group">
+                <label for="address1">Address 1:</label>
+                <input type="text" id="address1" name="address1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="address2">Address 2:</label>
+                <input type="text" id="address2" name="address2">
+            </div>
+
+            <div class="form-group">
+                <label for="postal_code">Postal Code:</label>
+                <input type="text" id="postal_code" name="postal_code" required oninput="onPostalCodeChange()">
+            </div>
+
+            <div class="form-group">
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" required>
+            </div>
+
+            <div class="form-group">
+                <label for="state">State:</label>
+                <input type="text" id="state" name="state" required>
+            </div>
+
+            <div class="form-group">
+                <label for="latitude">Latitude:</label>
+                <input type="number" step="0.000001" id="latitude" name="latitude">
+            </div>
+
+            <div class="form-group">
+                <label for="longitude">Longitude:</label>
+                <input type="number" step="0.000001" id="longitude" name="longitude">
+            </div>
+
+            <div class="form-group">
+                <label for="farm_size">Farm Size:</label>
+                <input type="number" step="0.01" id="farm_size" name="farm_size">
+            </div>
+
+            <div id="veterinaryDetailsContainer">
+                <h2>Veterinary Details</h2>
+                <div class="veterinary-details" id="veterinary_details_1">
+                    <h3>Veterinary 1</h3>
+                    <div class="form-group">
+                        <label for="veterinary_name_1">Veterinary Name:</label>
+                        <input type="text" id="veterinary_name_1" name="veterinary_name[]" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="mobile_number_1">Mobile Number:</label>
+                        <input type="text" id="mobile_number_1" name="mobile_number[]" required maxlength="10" oninput="validateInputLength(this, 10)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="clinic_name_1">Clinic Name:</label>
+                        <input type="text" id="clinic_name_1" name="clinic_name[]" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="clinic_number_1">Clinic Number:</label>
+                        <input type="text" id="clinic_number_1" name="clinic_number[]" required maxlength="10" oninput="validateInputLength(this, 10)">
+                    </div>
+                </div>
+            </div>
+
+            <div id="additionalVeterinaries"></div>
+            <div class="button-container">
+                <button type="button" onclick="addVeterinaryDetails()">Add One More Veterinary Details</button>
+            </div>
+
+            <div class="button-container">
+                <button type="submit">Register</button>
+            </div>
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='js/farm_registration_script.js') }}"></script>
+</body>
+</html>

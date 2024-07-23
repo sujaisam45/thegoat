@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Feed Price Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .container {
+            width: 50%;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            text-align: center;
+        }
+        .chart-container {
+            margin-top: 20px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        function calculatePrice(event) {
+            event.preventDefault();
+
+            const numGoats = document.getElementById('num_goats').value;
+            const feedPerGoat = document.getElementById('feed_per_goat').value;
+            const pricePerKg = document.getElementById('price_per_kg').value;
+            const totalMonths = document.getElementById('total_months').value;
+
+            const totalPrice = ((numGoats * feedPerGoat) / 1000) * pricePerKg * totalMonths;
+            document.getElementById('result').textContent = `Total Price: $${totalPrice.toFixed(2)}`;
+
+            const monthlyPrices = [];
+            for (let i = 1; i <= totalMonths; i++) {
+                monthlyPrices.push((numGoats * feedPerGoat * i / 1000) * pricePerKg);
+            }
+
+            renderChart(monthlyPrices);
+        }
+
+        function renderChart(data) {
+            const ctx = document.getElementById('priceChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: Array.from({ length: data.length }, (_, i) => `Month ${i + 1}`),
+                    datasets: [{
+                        label: 'Total Price',
+                        data: data,
+                        backgroundColor: 'rgba(0, 123, 255, 0.5)',
+                        borderColor: 'rgba(0, 123, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            html2canvas(document.getElementById('content')).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF();
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+                pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+                pdf.save('feed_price_calculator.pdf');
+            });
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</head>
+<body>
+    <div class="container" id="content">
+        <h1>Feed Price Calculator</h1>
+        <form onsubmit="calculatePrice(event)">
+            <label for="num_goats">Total Number of Goats:</label>
+            <input type="number" id="num_goats" name="num_goats" required><br>
+
+            <label for="feed_per_goat">Amount of Feed per Goat (grams):</label>
+            <input type="number" id="feed_per_goat" name="feed_per_goat" required><br>
+
+            <label for="price_per_kg">Price per kg of Feed:</label>
+            <input type="number" id="price_per_kg" name="price_per_kg" step="0.01" required><br>
+
+            <label for="total_months">Total Months:</label>
+            <input type="number" id="total_months" name="total_months" required><br>
+
+            <button type="submit">Calculate</button>
+        </form>
+        <div id="result" class="result"></div>
+        <div class="chart-container">
+            <canvas id="priceChart"></canvas>
+        </div>
+        <button onclick="downloadPDF()">Download as PDF</button>
+        <button onclick="goBack()">Go Back</button>
+    </div>
+</body>
+</html>

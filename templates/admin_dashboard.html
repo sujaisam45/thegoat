@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <form id="announcementForm" method="POST" action="{{ url_for('admin_dashboard') }}">
+        <textarea name="announcement" placeholder="Enter announcement here..."></textarea>
+        <button type="submit">Post Announcement</button>
+    </form>
+</body>
+</html>

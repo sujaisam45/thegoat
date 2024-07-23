@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slaughter Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/slaughter_styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Goat Ledger</h1>
+        <form id="slaughterForm" action="{{ url_for('register_slaughter') }}" method="post">
+            <label for="rfid">Goat ID:</label>
+            <input type="text" id="rfid" name="rfid" required><br>
+
+            <label for="gender">Gender:</label>
+            <input type="text" id="gender" name="gender" readonly><br>
+
+            <label for="dob">DOB/Date of Entry:</label>
+            <input type="date" id="dob" name="dob" readonly><br>
+
+            <label for="weight">Weight:</label>
+            <input type="number" step="0.01" id="weight" name="weight" readonly><br>
+
+            <div class="status-options">
+                <label><input type="radio" name="status" value="sold" onchange="showAdditionalFields()"> Sold</label>
+                <label><input type="radio" name="status" value="died" onchange="showAdditionalFields()"> Died</label>
+                <label><input type="radio" name="status" value="slaughtered" onchange="showAdditionalFields()"> Slaughtered</label>
+            </div>
+
+            <div id="additionalFields"></div>
+
+            <button type="submit">submit</button>
+        </form>
+        <a href="{{ url_for('existing_goat_actions', rfid='rfid') }}">
+            <button>Back to Actions</button>
+        </a>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const rfidField = document.getElementById('rfid');
+            const genderField = document.getElementById('gender');
+            const dobField = document.getElementById('dob');
+            const weightField = document.getElementById('weight');
+
+            rfidField.addEventListener('blur', function () {
+                const rfid = rfidField.value.trim();
+                fetch(`/get_goat_details?rfid=${rfid}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            genderField.value = data.gender;
+                            dobField.value = data.dob;
+                            weightField.value = data.weight;
+                        } else {
+                            console.error('No details found for RFID:', rfid);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+
+            function fetchRFID() {
+                fetch('/read_rfid', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.rfid) {
+                        rfidField.value = data.rfid;
+                        fetchRFIDDetails(data.rfid);
+                    } else {
+                        console.error('No RFID tag read');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+
+            function fetchRFIDDetails(rfid) {
+                fetch(`/get_goat_details?rfid=${rfid}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        genderField.value = data.gender;
+                        dobField.value = data.dob;
+                        weightField.value = data.weight;
+                    } else {
+                        console.error('No details found for RFID:', rfid);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            }
+
+            fetchRFID();
+        });
+    </script> 
+    <script src="{{ url_for('static', filename='js/slaughter_script.js') }}"></script>
+</body>
+</html>

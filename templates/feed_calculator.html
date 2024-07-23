@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kiraan Keperluan Makanan Harian Ternakan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            display: inline-block;
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .result-container {
+            margin-top: 20px;
+            display: none;
+        }
+        .result-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .result-table th,
+        .result-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        .result-table th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Kiraan Keperluan Makanan Harian Ternakan</h2>
+    <div class="form-group">
+        <label for="goatPicture">Gambar Ternakan</label>
+        <input type="file" id="goatPicture">
+    </div>
+    <div class="form-group">
+        <label for="goatID">ID Ternakan</label>
+        <input type="text" id="goatID">
+    </div>
+    <div class="form-group">
+        <label for="goatName">Nama Ternakan</label>
+        <input type="text" id="goatName">
+    </div>
+    <div class="form-group">
+        <label for="goatAge">Umur (bulan)</label>
+        <input type="number" id="goatAge">
+    </div>
+    <div class="form-group">
+        <label for="goatWeight">Berat Badan (kg)</label>
+        <input type="number" id="goatWeight">
+    </div>
+    <div class="form-group">
+        <label for="productionStage">Tahap Pengeluaran</label>
+        <select id="productionStage">
+            <option value="pembesaran">Pembesaran </option>
+            <option value="maintenance">Penyelenggaraan </option>
+            <option value="pembiakan">pembiakan</option>
+            <option value="menyusu">Menyusu </option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="includeHay">Ingin memberi Hay?</label>
+        <select id="includeHay">
+            <option value="yes">Yes</option>
+            <option value="no">No</option>
+        </select>
+    </div>
+    <button onclick="calculateFeed()">Calculate</button>
+</div>
+
+<div class="result-container" id="resultContainer">
+    <h3>Hasil Kiraan</h3>
+    <table class="result-table">
+        <tr>
+            <th>Parameter</th>
+            <th>Nilai</th>
+        </tr>
+        <tr>
+            <td>ID Ternakan</td>
+            <td id="resultID"></td>
+        </tr>
+        <tr>
+            <td>Nama Ternakan</td>
+            <td id="resultName"></td>
+        </tr>
+        <tr>
+            <td>Umur (bulan)</td>
+            <td id="resultAge"></td>
+        </tr>
+        <tr>
+            <td>Berat Badan (kg)</td>
+            <td id="resultWeight"></td>
+        </tr>
+        <tr>
+            <td>DMI</td>
+            <td id="resultDryMatter"></td>
+        </tr>
+        <tr>
+            <td>Fresh Fodder (Hijauan Segar)</td>
+            <td id="resultFreshFodder"></td>
+        </tr>
+        <tr>
+            <td>Hay</td>
+            <td id="resultHay"></td>
+        </tr>
+        <tr>
+            <td>Konsentrat</td>
+            <td id="resultConcentrate"></td>
+        </tr>
+    </table>
+    <canvas id="pieChart" style="max-width: 400px; margin: auto;"></canvas>
+    <button onclick="generatePDF()">Download PDF</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+<script>
+    function getDryMatterIntake(weight, stage) {
+        const stages = {
+            'pembesaran': 0.04,
+            'maintenance': 0.03,
+            'pembiakan': 0.036,
+            'menyusu': 0.043
+        };
+        return weight * stages[stage];
+    }
+
+    function calculateFeed() {
+        const weight = parseFloat(document.getElementById('goatWeight').value);
+        const stage = document.getElementById('productionStage').value;
+        const includeHay = document.getElementById('includeHay').value === 'yes';
+
+        const dryMatterIntake = getDryMatterIntake(weight, stage);
+        const freshFodder = dryMatterIntake * 0.7 * 5.3;
+        const hay = includeHay ? dryMatterIntake * 0.1 : 0;
+        const concentrate = dryMatterIntake * 0.2;
+
+        document.getElementById('resultID').innerText = document.getElementById('goatID').value;
+        document.getElementById('resultName').innerText = document.getElementById('goatName').value;
+        document.getElementById('resultAge').innerText = document.getElementById('goatAge').value;
+        document.getElementById('resultWeight').innerText = document.getElementById('goatWeight').value;
+        document.getElementById('resultDryMatter').innerText = dryMatterIntake.toFixed(2) + ' kg';
+        document.getElementById('resultFreshFodder').innerText = (includeHay ? freshFodder : freshFodder + hay).toFixed(2) + ' kg';
+        document.getElementById('resultHay').innerText = hay.toFixed(2) + ' kg';
+        document.getElementById('resultConcentrate').innerText = concentrate.toFixed(2) + ' kg';
+
+        document.getElementById('resultContainer').style.display = 'block';
+
+        const ctx = document.getElementById('pieChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: ['Fresh Fodder', 'Hay', 'Konsentrat'],
+                datasets: [{
+                    data: [includeHay ? freshFodder : freshFodder + hay, hay, concentrate],
+                    backgroundColor: ['green', 'yellow', 'gray']
+                }]
+            }
+        });
+    }
+
+    function generatePDF() {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const goatPicture = document.getElementById('goatPicture').files[0];
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            doc.addImage(event.target.result, 'JPEG', 80, 10, 50, 50);
+
+            doc.text('ID Ternakan: ' + document.getElementById('goatID').value, 20, 70);
+            doc.text('Nama Ternakan: ' + document.getElementById('goatName').value, 20, 80);
+            doc.text('Umur: ' + document.getElementById('goatAge').value + ' bulan', 20, 90);
+            doc.text('Berat Badan: ' + document.getElementById('goatWeight').value + ' kg', 20, 100);
+            doc.text('DMI: ' + document.getElementById('resultDryMatter').innerText, 20, 110);
+            doc.text('Fresh Fodder: ' + document.getElementById('resultFreshFodder').innerText, 20, 120);
+            doc.text('Hay: ' + document.getElementById('resultHay').innerText, 20, 130);
+            doc.text('Konsentrat: ' + document.getElementById('resultConcentrate').innerText, 20, 140);
+
+            const imgData = document.getElementById('pieChart').toDataURL('image/png');
+            doc.addImage(imgData, 'PNG', 50, 150, 100, 100);
+
+            const timestamp = new Date().toISOString().replace(/[-:T]/g, '').slice(0, 14);
+            const uniqueID = 'penternak.my/' + timestamp + '/' + Math.floor(Math.random() * 10000);
+            doc.text('Generated by: ' + uniqueID, 20, 270);
+
+            doc.save('feeding_calculator.pdf');
+        };
+        reader.readAsDataURL(goatPicture);
+    }
+</script>
+
+</body>
+</html>

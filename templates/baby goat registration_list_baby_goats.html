@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registered Baby Goats</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Registered Baby Goats</h1>
+    </header>
+    <div class="container">
+        <ul>
+            {% for goat in baby_goats %}
+            <li>
+                <a href="{{ url_for('certificate', goat_id=goat[0]) }}">
+                    Goat ID: {{ goat[0] }}, Date of Birth: {{ goat[1] }}, Gender: {{ goat[2] }}
+                </a>
+            </li>
+            {% endfor %}
+        </ul>
+        <a href="/">Back to Home</a>
+    </div>
+</body>
+</html>

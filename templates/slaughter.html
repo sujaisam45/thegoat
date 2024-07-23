@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Slaughtered Goats</title>
+</head>
+<body>
+    <h1>Slaughtered Goats</h1>
+    <table border="1">
+        <tr>
+            <th>RFID</th>
+            <th>Gender</th>
+            <th>Date of Birth</th>
+            <th>Weight</th>
+            <th>Sold Amount</th>
+            <th>Buyer Name</th>
+            <th>Cause of Death</th>
+            <th>Slaughter Cost</th>
+        </tr>
+        {% for goat in slaughtered_goats %}
+        <tr>
+            <td>{{ goat[0] }}</td>
+            <td>{{ goat[1] }}</td>
+            <td>{{ goat[2] }}</td>
+            <td>{{ goat[3] }}</td>
+            <td>{{ goat[4] }}</td>
+            <td>{{ goat[5] }}</td>
+            <td>{{ goat[6] }}</td>
+            <td>{{ goat[7] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

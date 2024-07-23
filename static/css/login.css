@@ -1,0 +1,144 @@
+.container {
+    position: relative; /* Relative positioning within the body */
+    width: 100%;
+    max-width: 320px; /* Max width of the form */
+    height: auto;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.9);
+    margin: 0 auto; /* Centers horizontally */
+    transform: translateY(-50%); /* Centers vertically */
+    top: 50%; /* Pushes down from the top by half of the viewport height */
+    box-sizing: border-box;
+    text-align: center;
+}
+
+h1 {
+    color: #3e8e41;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    text-align: left;
+}
+
+input[type="email"],
+input[type="password"] {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+p {
+    margin-top: 20px;
+}
+
+a {
+    color: #3e8e41;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+.logo-container img {
+    width: 100px; /* Adjust size as needed */
+    margin: 0 auto 20px; /* Centers the logo and adds space below */
+    display: block;
+}
+
+input[type="email"]:hover,
+input[type="password"]:hover {
+    border-color: #3e8e41; /* Changes border color on hover */
+}
+
+input[type="email"]:focus,
+input[type="password"]:focus {
+    outline: none;
+    border-color: #5ea15d; /* A slightly lighter green on focus */
+    box-shadow: 0 0 8px rgba(62, 142, 65, 0.8); /* Adds a glow effect */
+}
+
+.alert {
+    display: none; /* Hidden by default */
+    width: 100%; /* Full container width */
+    margin: 0 auto;
+    padding: 10px;
+    color: #ffffff; /* Bright white text for visibility */
+    background-color: #f44336; /* Red background for error messages */
+    text-align: center;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Slight shadow for 3D effect */
+    transition: all 0.3s ease; /* Smooth transition for showing the alert */
+}
+
+/* CSS to smoothly show the alert */
+.alert.show {
+    display: block; /* Show the alert */
+    opacity: 1; /* Full opacity */
+}
+
+.alert.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+body {
+    height: 100%;
+    background: url('/static/images/background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    overflow: hidden; /* Prevents scrolling */
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    height: 100vh;  
+}
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #3e8e41; /* Solid background color */
+    border: 2px solid #3e8e41; /* Same color border */
+    border-radius: 4px;
+    color: white; /* Text color */
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+    background-color: #2e6e31; /* Darker shade on hover */
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2); /* Shadow effect for depth */
+    transform: scale(1.05); /* Slight scale up on hover */
+}
+
+@media (max-width: 768px) { /* Adjusts styles for tablets and down */
+    .container {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) { /* Adjusts styles for mobile devices */
+    .container {
+        width: 90%; /* More width for smaller devices */
+        padding: 10px;
+    }
+
+    h1, label {
+        font-size: smaller; /* Smaller text to fit smaller screens */
+    }
+
+    input[type="email"],
+    input[type="password"],
+    button {
+        font-size: 14px; /* Smaller font size for better usability on mobile */
+    }
+}

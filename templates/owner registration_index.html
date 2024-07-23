@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Registration</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/owner_registration_styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Owner Registration</h1>
+        <form action="{{ url_for('register_owner') }}" method="post">
+            <div class="form-group">
+                <label for="name">Owner Name:</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="ic_no">IC No.:</label>
+                <input type="text" id="ic_no" name="ic_no" required maxlength="14" oninput="formatICNo(this)">
+            </div>
+
+            <div class="form-group">
+                <label for="dob">Date of Birth:</label>
+                <input type="text" id="dob" name="dob" required readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Gender:</label>
+                <div class="icon-group">
+                    <div id="male" class="gender-icon" onclick="selectGender('male')">&#x1F468; Male</div>
+                    <div id="female" class="gender-icon" onclick="selectGender('female')">&#x1F469; Female</div>
+                </div>
+                <input type="hidden" id="gender" name="gender">  <!-- Hidden input to store the gender value -->
+            </div>
+
+            <div class="form-group">
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" name="email" required oninput="validateEmail()">
+                <span id="email-error" class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required oninput="validatePassword()">
+                <div id="password-requirements">
+                    <p><span id="min-length" class="requirement">8 characters</span></p>
+                    <p><span id="uppercase" class="requirement">1 uppercase letter</span></p>
+                    <p><span id="numeric" class="requirement">1 numeric digit</span></p>
+                    <p><span id="special-char" class="requirement">1 special character</span></p>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="telephone">Telephone:</label>
+                <input type="text" id="telephone" name="telephone" required maxlength="10" oninput="validateInputLength(this, 10)">
+            </div>
+
+            <div class="form-group">
+                <label for="address1">Address 1:</label>
+                <input type="text" id="address1" name="address1" required>
+            </div>
+
+            <div class="form-group">
+                <label for="address2">Address 2:</label>
+                <input type="text" id="address2" name="address2">
+            </div>
+
+            <div class="form-group">
+                <label for="postal_code">Postal Code:</label>
+                <input type="text" id="postal_code" name="postal_code" required oninput="onPostalCodeChange()">
+            </div>
+
+            <div class="form-group">
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" required>
+            </div>
+
+            <div class="form-group">
+                <label for="district">District:</label>
+                <input type="text" id="district" name="district" required>
+            </div>
+
+            <div class="form-group">
+                <label for="state">State:</label>
+                <input type="text" id="state" name="state" required>
+            </div>
+
+            <div class="form-group">
+                <label for="business_type">Business Type:</label>
+                <select id="business_type" name="business_type" required onchange="toggleCompanyFields()">
+                    <option value="private">Private</option>
+                    <option value="company">Company</option>
+                </select>
+            </div>
+
+            <div class="form-group company-only" style="display: none;">
+                <label for="company_name">Company Name:</label>
+                <input type="text" id="company_name" name="company_name">
+            </div>
+
+            <div class="form-group company-only" style="display: none;">
+                <label for="registration_no">Registration No.:</label>
+                <input type="text" id="registration_no" name="registration_no" maxlength="13" oninput="validateInputLength(this, 13)">
+            </div>
+
+            <div class="button-container">
+                <button type="submit">Register</button>
+            </div>
+        </form>
+    </div>
+    <script src="{{ url_for('static', filename='js/owner_registration_script.js') }}"></script>
+</body>
+</html>

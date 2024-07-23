@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baby Goat Certificate</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <h1>Baby Goat Certificate</h1>
+    {% if details %}
+        <p>RFID: {{ details[0] }}</p>
+        <p>Date of Birth: {{ details[1] }}</p>
+        <p>Gender: {{ details[2] }}</p>
+        <p>Father Goat RFID: {{ details[3] }}</p>
+        <p>Mother Goat RFID: {{ details[4] }}</p>
+        <p>Born Weight: {{ details[5] }} kg</p>
+    {% else %}
+        <p>Baby goat not found.</p>
+    {% endif %}
+</body>
+</html>

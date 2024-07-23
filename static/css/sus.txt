@@ -1,0 +1,4 @@
+@app.route('/existing_goat_registration', methods=['GET'])
+def existing_goat_registration():
+    rfid = request.args.get('rfid')
+    return render_template('existing goat registration_index.html', rfid=rfid)

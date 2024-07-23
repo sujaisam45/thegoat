@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Admin Dashboard</h1>
+        <div class="options">
+            <h2>Options</h2>
+            <div class="option-buttons">
+                <button onclick="location.href='{{ url_for('post_update') }}'">Post Update</button>
+                <button onclick="location.href='{{ url_for('index') }}'">Back to Home</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

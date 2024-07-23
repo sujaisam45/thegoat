@@ -1,0 +1,114 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background: url('/static/images/background.jpg') no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    height: 100vh; /* Full viewport height, prevents scrolling */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 320px; /* Adjust width as needed */
+    background: rgba(255, 255, 255, 0.9);
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 90vh; /* Adjust the height as per your content */
+    margin: auto; /* Centers the container without specific vertical offset */
+}
+
+h1, h2 {
+    color: #3e8e41;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    text-align: left;
+    color: #333;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="email"],
+.form-group select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.form-group input:hover,
+.form-group select:hover,
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #5ea15d;
+    box-shadow: 0 0 8px rgba(62, 142, 65, 0.8);
+}
+
+.button-container button {
+    width: 100%;
+    padding: 12px;
+    background-color: #3e8e41;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s, box-shadow 0.2s;
+}
+
+.button-container button:hover {
+    background-color: #2e6e31;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 15px;
+    }
+
+    h1, h2, label {
+        font-size: smaller;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    select,
+    button {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        width: 90%;
+        padding: 10px;
+    }
+}
+
+.button-container {
+    margin-top: 20px; /* Add space above the button */
+}
+
+.veterinary-details + .veterinary-details {
+    margin-top: 30px; /* Adds space between multiple veterinary detail entries */
+}

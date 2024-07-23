@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Farm</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('{{ url_for('static', filename='images/background.jpg') }}');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        .header {
+            background: rgba(0, 128, 0, 0.8);
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+        }
+        .header p {
+            margin: 0;
+            font-size: 1.2em;
+        }
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .radio-buttons, .period-buttons {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .radio-buttons label, .period-buttons label {
+            margin-right: 15px;
+            font-size: 1.2em;
+        }
+        .period-buttons label {
+            font-size: 1em;
+        }
+        .table-container {
+            display: none;
+            margin-top: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        table, th, td {
+            border: 1px solid #dddddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #35424a;
+            color: white;
+        }
+        .input-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 1em;
+        }
+        .chart-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .chart-container canvas {
+            max-width: 400px;
+            margin: auto;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function getDryMatterIntake(weight, type) {
+            const types = {
+                'Grower': 0.04,
+                'Maintain': 0.03,
+                'Breeding': 0.036,
+                'Lactating': 0.043
+            };
+            return weight * types[type];
+        }
+
+        function calculateFeed(weight, noOfGoats, period, type) {
+            let factor;
+            switch (period) {
+                case 'per_day':
+                    factor = 1;
+                    break;
+                case 'per_week':
+                    factor = 7;
+                    break;
+                case 'per_month':
+                    factor = 30;
+                    break;
+                default:
+                    factor = 1;
+            }
+
+            let dmi = getDryMatterIntake(weight, type) * noOfGoats * factor;
+            let forage = dmi * 0.7 * 5.3;
+            let hay = dmi * 0.1;
+            let pellet = dmi * 0.2;
+
+            return { forage, hay, pellet };
+        }
+
+        function displayTable(type) {
+            let periods = ['per_day', 'per_week', 'per_month'];
+            periods.forEach(period => {
+                let tableContainer = document.querySelector(`.table-container[data-period="${period}"]`);
+                let table = tableContainer.querySelector('tbody');
+                table.innerHTML = '';
+                let weights = ['0-10', '10-20', '20-30', '30-40', '40-50', '50-60'];
+
+                weights.forEach(weight => {
+                    table.innerHTML += `
+                        <tr>
+                            <td>${weight}</td>
+                            <td><input type="number" class="no-of-goats" min="0" value="0" data-weight="${weight}" data-period="${period}" oninput="syncInputs('${weight}')"></td>
+                            <td class="forage"></td>
+                            <td class="hay"></td>
+                            <td class="pellet"></td>
+                        </tr>
+                    `;
+                });
+            });
+
+            updateFeedCalculations();
+        }
+
+        function updateFeedCalculations() {
+            let rows = document.querySelectorAll('.table-container tbody tr');
+            let type = document.querySelector('input[name="goat-type"]:checked').value;
+            let forageTotal = { per_day: 0, per_week: 0, per_month: 0 };
+            let hayTotal = { per_day: 0, per_week: 0, per_month: 0 };
+            let pelletTotal = { per_day: 0, per_week: 0, per_month: 0 };
+
+            rows.forEach(row => {
+                let weightRange = row.querySelector('.no-of-goats').getAttribute('data-weight').split('-').map(Number);
+                let midWeight = (weightRange[0] + weightRange[1]) / 2;
+                let noOfGoats = row.querySelector('.no-of-goats').value;
+                let period = row.querySelector('.no-of-goats').getAttribute('data-period');
+                let { forage, hay, pellet } = calculateFeed(midWeight, noOfGoats, period, type);
+
+                row.querySelector('.forage').textContent = forage.toFixed(2);
+                row.querySelector('.hay').textContent = hay.toFixed(2);
+                row.querySelector('.pellet').textContent = pellet.toFixed(2);
+
+                forageTotal[period] += forage;
+                hayTotal[period] += hay;
+                pelletTotal[period] += pellet;
+            });
+
+            updateChart('per_day', forageTotal.per_day, hayTotal.per_day, pelletTotal.per_day);
+            updateChart('per_week', forageTotal.per_week, hayTotal.per_week, pelletTotal.per_week);
+            updateChart('per_month', forageTotal.per_month, hayTotal.per_month, pelletTotal.per_month);
+        }
+
+        function updateChart(period, forage, hay, pellet) {
+            const ctx = document.getElementById(`${period}Chart`).getContext('2d');
+            if (window[`${period}ChartInstance`]) {
+                window[`${period}ChartInstance`].destroy();
+            }
+            window[`${period}ChartInstance`] = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Forage', 'Hay', 'Pellet'],
+                    datasets: [{
+                        data: [forage, hay, pellet],
+                        backgroundColor: ['#4CAF50', '#FFC107', '#FF5722']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (tooltipItem) {
+                                    return tooltipItem.label + ': ' + tooltipItem.raw.toFixed(2) + ' kg';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function syncInputs(weight) {
+            let periods = ['per_day', 'per_week', 'per_month'];
+            let value;
+            periods.forEach(period => {
+                let input = document.querySelector(`.no-of-goats[data-weight="${weight}"][data-period="${period}"]`);
+                if (value === undefined) {
+                    value = input.value;
+                } else {
+                    input.value = value;
+                }
+            });
+            updateFeedCalculations();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            let radioButtons = document.querySelectorAll('input[name="goat-type"]');
+            radioButtons.forEach(button => {
+                button.addEventListener('change', function() {
+                    displayTable(this.value);
+                });
+            });
+
+            let periodButtons = document.querySelectorAll('input[name="feed-period"]');
+            periodButtons.forEach(button => {
+                button.addEventListener('change', function() {
+                    document.querySelectorAll('.table-container').forEach(container => {
+                        container.style.display = 'none';
+                    });
+                    let selectedPeriod = document.querySelector('input[name="feed-period"]:checked').value;
+                    document.querySelector(`.table-container[data-period="${selectedPeriod}"]`).style.display = 'block';
+                    updateFeedCalculations();
+                });
+            });
+
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('no-of-goats')) {
+                    updateFeedCalculations();
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="header">
+        <h1>About Our Farm</h1>
+        <p>Statistics on Forage, Hay, and Pellet Usage</p>
+    </div>
+    <div class="container">
+        <h2>Select Goat Type</h2>
+        <div class="radio-buttons">
+            <label><input type="radio" name="goat-type" value="Grower"> Grower</label>
+            <label><input type="radio" name="goat-type" value="Lactating"> Lactating</label>
+            <label><input type="radio" name="goat-type" value="Breeding"> Breeding</label>
+            <label><input type="radio" name="goat-type" value="Maintain"> Maintain</label>
+        </div>
+
+        <h2>Select Feed Period</h2>
+        <div class="period-buttons">
+            <label><input type="radio" name="feed-period" value="per_day"> Per Day</label>
+            <label><input type="radio" name="feed-period" value="per_week"> Per Week</label>
+            <label><input type="radio" name="feed-period" value="per_month"> Per Month</label>
+        </div>
+
+        <form>
+            <div class="table-container" data-period="per_day">
+                <h3>Per Day</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Weight (kg)</th>
+                            <th>No of Goats</th>
+                            <th>Forage (kg/day)</th>
+                            <th>Hay (kg/day)</th>
+                            <th>Pellet (kg/day)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rows will be inserted here dynamically -->
+                    </tbody>
+                </table>
+                <div class="chart-container">
+                    <canvas id="per_dayChart"></canvas>
+                </div>
+            </div>
+
+            <div class="table-container" data-period="per_week">
+                <h3>Per Week</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Weight (kg)</th>
+                            <th>No of Goats</th>
+                            <th>Forage (kg/week)</th>
+                            <th>Hay (kg/week)</th>
+                            <th>Pellet (kg/week)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rows will be inserted here dynamically -->
+                    </tbody>
+                </table>
+                <div class="chart-container">
+                    <canvas id="per_weekChart"></canvas>
+                </div>
+            </div>
+
+            <div class="table-container" data-period="per_month">
+                <h3>Per Month</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Weight (kg)</th>
+                            <th>No of Goats</th>
+                            <th>Forage (kg/month)</th>
+                            <th>Hay (kg/month)</th>
+                            <th>Pellet (kg/month)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rows will be inserted here dynamically -->
+                    </tbody>
+                </table>
+                <div class="chart-container">
+                    <canvas id="per_monthChart"></canvas>
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
